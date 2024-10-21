@@ -9,6 +9,9 @@ const CalendarApp = () => {
   const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
   const [selectedDate, setSelectedDate] = useState(currentDate);
   const [showEventPopup, setShowEventPopup] = useState(false);
+  const [events, setEvents] = useState([]);
+  const [eventTime, setEventTime] = useState({hours: "00", minutes: "00"});
+  const [eventText, setEventText] = useState("");
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfMonth =  new Date(currentYear, currentMonth, 1).getDay();
@@ -28,8 +31,10 @@ const CalendarApp = () => {
     const today = new Date();
 
     if(clickedDate >= today || isSameDay(clickedDate, today)) {
-      selectedDate(clickedDate);
+      setSelectedDate(clickedDate);
       setShowEventPopup(true);
+      setEventTime({hours: "00", minutes: "00"});
+      setEventText("");
     }
   }
 
@@ -39,6 +44,19 @@ const CalendarApp = () => {
       date1.getMonth() === date2.getMonth() &&
       date1.getDate() === date2.getDate()
     )
+  }
+
+  const handleEventSubmit = () => {
+    const newEvent = {
+      date: selectedDate,
+      time: `${eventTime.hours.padStart(2, '0')}:${eventTime.minutes.padStart(2, '0')}`,
+      text: eventText,
+    }
+
+    setEvents([...events, newEvent]);
+    setEventTime({hours: "00", minutes: "00"})
+    setEventText("")
+    setShowEventPopup(false);
   }
 
   return (
@@ -62,12 +80,12 @@ const CalendarApp = () => {
           {[...Array(firstDayOfMonth).keys()].map((_, index) => (
             <span key={`empty-${index}`}/>
           ))}
-          {[...Array(daysInMonth).keys()].map((day) =>
+          {[...Array(daysInMonth).keys()].map((day) => (
             <span key={day + 1} className={day + 1 === currentDate.getDate() && currentMonth === currentDate.getMonth() && 
               currentYear == currentDate.getFullYear() ? 'current-day' : ''} 
               onClick={() => handleDayClick(day + 1)}
               >{day + 1}</span>
-          )}
+          ))}
         </div>
       </div>
       <div className="events">
@@ -75,8 +93,8 @@ const CalendarApp = () => {
           <div className="event-popup">
             <div className="time-input">
               <div className="event-popup-time">Time</div>
-              <input type="number" name="hours" min={0} max={24} className="hours"/>
-              <input type="number" name="minutes" min={0} max={60} className="minutes"/>
+              <input type="number" name="hours" min={0} max={24} className="hours" value={eventTime.hours} onChange={(e) => setEventTime({...eventTime, hours: e.target.value})}/>
+              <input type="number" name="minutes" min={0} max={60} className="minutes" value={eventTime.minutes}/>
             </div>
             <textarea placeholder="Enter Event Text (Maximum 60 Characters)"></textarea>
             <button className="event-popup-btn">Add Event</button>
