@@ -1,3 +1,4 @@
+import React from 'react';
 import CalendarApp from "./Components/CalendarApp";
 import './assets/styles/styles.css';
 

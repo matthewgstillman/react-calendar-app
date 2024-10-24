@@ -1,21 +1,34 @@
+import React from 'react';
 import { useState } from 'react';
 
-const CalendarApp = () => {
+type EventTime = {
+  hours: string;
+  minutes: string;
+}
+
+type Event = {
+  id: number;
+  date: Date;
+  time: string;
+  text: string;
+};
+
+const CalendarApp: React.FC = () => {
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const monthsOfYear = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const currentDate = new Date();
 
-  const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
-  const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
-  const [selectedDate, setSelectedDate] = useState(currentDate);
-  const [showEventPopup, setShowEventPopup] = useState(false);
-  const [events, setEvents] = useState([]);
-  const [eventTime, setEventTime] = useState({hours: "00", minutes: "00"});
-  const [eventText, setEventText] = useState("");
-  const [editingEvent, setEditingEvent] = useState(null);
+  const [currentMonth, setCurrentMonth] = useState<number>(currentDate.getMonth());
+  const [currentYear, setCurrentYear] = useState<number>(currentDate.getFullYear());
+  const [selectedDate, setSelectedDate] = useState<Date>(currentDate);
+  const [showEventPopup, setShowEventPopup] = useState<boolean>(false);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [eventTime, setEventTime] = useState<EventTime>({hours: "00", minutes: "00"});
+  const [eventText, setEventText] = useState<string>("");
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDayOfMonth =  new Date(currentYear, currentMonth, 1).getDay();
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
 
   const prevMonth = () => {
     setCurrentMonth((prevMonth) => (prevMonth === 0 ? 11 : prevMonth - 1));
@@ -27,7 +40,7 @@ const CalendarApp = () => {
     setCurrentYear((prevYear) => (currentMonth === 11 ? prevYear + 1 : prevYear));
   }
 
-  const handleDayClick = (day) => {
+  const handleDayClick = (day: number) => {
     const clickedDate = new Date(currentYear, currentMonth, day);
     const today = new Date();
 
@@ -40,17 +53,17 @@ const CalendarApp = () => {
     }
   }
 
-  const isSameDay = (date1, date2) => {
+  const isSameDay = (date1: Date, date2: Date): boolean => {
     return (
       date1.getFullYear() === date2.getFullYear() && 
       date1.getMonth() === date2.getMonth() &&
       date1.getDate() === date2.getDate()
-    )
+    );
   }
 
-  const handleEventSubmit = (event) => {
+  const handleEventSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const newEvent = {
+    const newEvent: Event = {
       id: editingEvent ? editingEvent.id : Date.now(),
       date: selectedDate,
       time: `${eventTime.hours.padStart(2, '0')}:${eventTime.minutes.padStart(2, '0')}`,
@@ -65,41 +78,41 @@ const CalendarApp = () => {
       updatedEvents.push(newEvent);
     }
 
-    updatedEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+    updatedEvents.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     setEvents(updatedEvents);
-    setEventTime({hours: "00", minutes: "00"})
-    setEventText("")
+    setEventTime({ hours: "00", minutes: "00" });
+    setEventText("");
     setShowEventPopup(false);
     setEditingEvent(null);
   }
 
-  const handleEditEvent = (event) => {
-    setSelectedDate(new Date(event.date))
+  const handleEditEvent = (event: Event) => {
+    setSelectedDate(new Date(event.date));
     setEventTime({
       hours: event.time.split(":")[0],
       minutes: event.time.split(":")[1],
-    })
+    });
     setEventText(event.text);
     setEditingEvent(event);
     setShowEventPopup(true);
   }
 
-  const convertTo12HourFormat = (time) => {
+  const convertTo12HourFormat = (time: string): string => {
     const [hours, minutes] = time.split(":").map(Number);
     const period = hours >= 12 ? "PM" : "AM";
     const formattedHours = hours % 12 || 12;
     return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
   };
 
-  const handleDeleteEvent = (eventId) => {
-    const updatedEvents = events.filter((event) => event.id != eventId);
+  const handleDeleteEvent = (eventId: number) => {
+    const updatedEvents = events.filter((event) => event.id !== eventId);
     setEvents(updatedEvents);
   }
 
-  const handleTimeChange = (event) => {
-    const {name, value} = event.target
-    setEventTime((prevTime) => ({...prevTime, [name]: value.padStart(2, '0')}));
+  const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setEventTime((prevTime) => ({ ...prevTime, [name]: value.padStart(2, '0') }));
   }
 
   return (
