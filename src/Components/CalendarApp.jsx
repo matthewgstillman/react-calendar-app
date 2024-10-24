@@ -107,7 +107,7 @@ const CalendarApp = () => {
       <div className="calendar">
         <h1 className="heading">Calendar</h1>
         <div className="navigate-date">
-          <h2 className="month">{monthsOfYear[currentMonth]},</h2>
+          <h2 className="month">{monthsOfYear[currentMonth]}</h2>
           <h2 className="year">{currentYear}</h2>
           <div className="buttons">
             <i className="bx bx-chevron-left" onClick={prevMonth}></i>
@@ -155,7 +155,9 @@ const CalendarApp = () => {
         {events.map((event, index) => (
         <div className="event" key={index}>
           <div className="event-date-wrapper">
-            <div className="event-date">{`${monthsOfYear[event.date.getMonth()]} ${event.date.getDate()}, ${event.date.getFullYear()}`}</div>
+          <div className="event-date">
+             {`${monthsOfYear[event.date.getMonth()].length === 3 ? monthsOfYear[event.date.getMonth()] : monthsOfYear[event.date.getMonth()].substring(0, 3)} ${event.date.getDate()}, ${event.date.getFullYear()}`}
+          </div>
             <div className="event-time">{convertTo12HourFormat(event.time)}</div>
           </div>
           <div className="event-text">{event.text}</div>

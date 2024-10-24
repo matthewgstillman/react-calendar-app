@@ -1,5 +1,5 @@
 import CalendarApp from "./Components/CalendarApp";
-import './Components/CalendarApp.css';
+import './assets/styles/styles.css';
 
 const App = () => {
   return (
