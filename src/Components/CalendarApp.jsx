@@ -92,6 +92,11 @@ const CalendarApp = () => {
     return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
   };
 
+  const handleDeleteEvent = (eventId) => {
+    const updatedEvents = events.filter((event) => event.id != eventId);
+    setEvents(updatedEvents);
+  }
+
   return (
     <div className="calendar-app">
       <div className="calendar">
@@ -151,7 +156,7 @@ const CalendarApp = () => {
           <div className="event-text">{event.text}</div>
           <div className="event-buttons">
             <i className="bx bxs-edit-alt" onClick={() => handleEditEvent(event)}></i>
-            <i className="bx bxs-message-alt-x"></i>
+            <i className="bx bxs-message-alt-x" onClick={() => handleDeleteEvent(event.id)}></i>
           </div>
         </div>
         ))}
